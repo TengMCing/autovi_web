@@ -1,5 +1,5 @@
-### Step 2: Select columns for:
+### Step 3: Select target columns
 - `.resid`. Residuals.
 - `.fitted`. Fitted values.
-- `.sample`. Labels for residual plots. It can be numeric values or strings. This is an optional column. 
 
+Note: 19 null plots will be automatically generated to form a lineup. The residuals of the null plot will be simulated from a normal distribution.
