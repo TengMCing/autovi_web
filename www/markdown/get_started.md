@@ -1,6 +1,6 @@
-## Get started
+## Info - autovi.web 0.1.0
 
-This is a web application of the 
+This is a shiny web application of the [`autovi`](https://github.com/TengMCing/autovi) R package. 
 
 Interested in trying automated visual inference locally? Explore our R package [autovi](https://github.com/TengMCing/autovi).
 

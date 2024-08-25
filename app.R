@@ -55,8 +55,8 @@ ui <- dashboardPage(
                   tags$li(class = "dropdown", tags$a(href = "https://github.com/TengMCing/autovi_web", target="_blank", icon("github")))),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Get Started", tabName = "get_started", icon = icon("circle-info")),
-      menuItem("Residual Plot Diagnostics", tabName = "single_tab", icon = icon("chart-line"))
+      menuItem("Residual Plot Diagnostics", tabName = "single_tab", icon = icon("chart-line")),
+      menuItem("Info", tabName = "get_started", icon = icon("circle-info"))
       # menuItem("Lineup Evaluation", tabName = "lineup_tab", icon = icon("layer-group"))
     )
   ),
@@ -154,7 +154,7 @@ ui <- dashboardPage(
                       height = 700,
                       status = "success"),
                   box(h3("Gradient of model output with respect to the greyscale input of the true residual plot"),
-                      shinyjs::hidden(actionButton("show_attention", "No significant violations (p-value > 5%), click this button to toggle the attention map.")),
+                      shinyjs::hidden(actionButton("show_attention", "No significant violations (p-value > 5%), click this button to show/hide the attention map.")),
                       div(shinycssloaders::withSpinner(plotOutput("attention", width = "100%", height = "600px")), id = "attention_div"),
                       width = 6,
                       height = 700,
@@ -185,7 +185,7 @@ ui <- dashboardPage(
                         height = 700,
                         status = "success"),
                     box(h3("Gradient of model output with respect to the greyscale input of the true residual plot"),
-                        shinyjs::hidden(actionButton("show_lineup_attention", "No significant violations (p-value > 5%), click this button to toggle the attention map.")),
+                        shinyjs::hidden(actionButton("show_lineup_attention", "No significant violations (p-value > 5%), click this button to show/hide the attention map.")),
                         div(shinycssloaders::withSpinner(plotOutput("lineup_attention", width = "100%", height = "600px")), id = "lineup_attention_div"),
                         width = 6,
                         height = 700,
@@ -538,7 +538,7 @@ server <- function(input, output, session) {
     sorted_sample <- sort(unique(new_data$.sample))
     vss <- unlist(input$prediction[-1])
     true_pos <- new_data$.sample[new_data$null == FALSE][1]
-    p_value <- 1/length(vss) + sum(vss > vss[true_pos])/length(vss)
+    p_value <- sum(vss >= vss[true_pos])/length(vss)
     num_gt <- sum(vss > vss[true_pos])
     
     if (p_value > 0.05) {
@@ -603,7 +603,7 @@ server <- function(input, output, session) {
     
     sorted_sample <- sort(unique(this_data$.sample))
     vss <- unlist(input$lineup_prediction[-1])
-    p_value <- unlist(lapply(vss, function(x) 1/length(vss) + sum(vss > x)/length(vss)))
+    p_value <- unlist(lapply(vss, function(x) mean(vss >= x)))
     true_sample <- isolate(as.integer(input$true_sample))
     
     if (true_sample != 0) {
@@ -646,10 +646,19 @@ server <- function(input, output, session) {
     
     sorted_sample <- sort(unique(this_data$.sample))
     vss <- unlist(input$lineup_prediction[-1])
+    true_sample <- isolate(as.integer(input$true_sample))
+    
+    if (true_sample == 0) {
+      null <- "NA"
+    } else {
+      null <- rep(TRUE, length(vss))
+      null[true_sample] <- FALSE
+    }
     
     data.frame(.sample = sorted_sample,
                vss = vss,
-               rank = rank(-vss, ties.method = "first")) %>%
+               rank = rank(-vss, ties.method = "first"),
+               null = null) %>%
       mutate(.sample = factor(.sample)) %>%
       mutate(vss = format(vss, digits = 3)) %>% 
       mutate(rank = format(rank)) %>%
@@ -795,7 +804,7 @@ server <- function(input, output, session) {
     true_pos <- new_data$.sample[new_data$null == FALSE][1]
     true_vss <- ori_vss[true_pos]
     
-    p_value <- unlist(lapply(vss, function(x) 1/length(ori_vss) + sum(ori_vss[-true_pos] > x)/length(ori_vss)))
+    p_value <- unlist(lapply(vss, function(x) sum(c(ori_vss[-true_pos], x) >= x)/length(ori_vss)))
     
     glue::glue("<h4>{sum(p_value <= 0.05)} out of {length(p_value)} ({scales::percent(mean(p_value <= 0.05))}) of bootstrapped residual plots show significant violations  (p-value <= 0.05).</h4>")
   })
@@ -838,9 +847,7 @@ server <- function(input, output, session) {
     true_sample <- as.integer(isolate(input$true_sample))
     true_vss <- ori_vss[true_sample]
     
-    p_value <- unlist(lapply(vss, function(x) 1/length(ori_vss) + sum(ori_vss[-true_sample] > x)/length(ori_vss)))
-    
-    print(p_value)
+    p_value <- unlist(lapply(vss, function(x) sum(c(ori_vss[-true_sample], x) >= x)/length(ori_vss)))
     
     glue::glue("<h4>{sum(p_value <= 0.05)} out of {length(p_value)} ({scales::percent(mean(p_value <= 0.05))}) of bootstrapped residual plots show significant violations (p-value <= 0.05).</h4>")
   })
