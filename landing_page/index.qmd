@@ -1,8 +1,15 @@
-# Welcome !
+# Welcome to `autovi.web`!
 
+Thank you for visiting `autovi.web`, an application designed for automated residual plot assessment.
 
-Here are the links to the web applications. Please note that these links may be updated if there is a change in server hosting services.
+Below are the links to access the application. Please note that these links may be updated if server hosting services change.
 
-1. [https://akdd4t-patrick-li.shinyapps.io/autovi_web/](https://akdd4t-patrick-li.shinyapps.io/autovi_web/)
-XXX
-XXX
+## Access the application
+
+- [https://akdd4t-patrick-li.shinyapps.io/autovi_web/](https://akdd4t-patrick-li.shinyapps.io/autovi_web/)
+- TBD
+- TBD
+
+---
+
+For any questions or issues, please contact the maintainer at [patrick.li@monash.edu](mailto:patrick.li@monash.edu).
