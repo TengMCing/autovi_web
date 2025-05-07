@@ -1,6 +1,7 @@
 ### Step 3: Select target columns
-- `.resid`. Residuals.
-- `.fitted`. Fitted values.
-- `.sample`. Labels for residual plots. It can be numeric values or strings
 
+Please specify the columns for:
 
+- fitted values (default: `.fitted`)
+- residuals (default: `.resid`)
+- labels (default: `.sample`)
