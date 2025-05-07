@@ -16,6 +16,9 @@ reticulate::py_install(c("numpy", "Pillow"),
                        ignore_installed = FALSE)
 reticulate::use_virtualenv("r-web_interface")
 
+# Maximum upload size (50 MB)
+options(shiny.maxRequestSize = 50 * 1024 * 1024)
+
 
 # Globals -----------------------------------------------------------------
 
