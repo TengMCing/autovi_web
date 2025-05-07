@@ -114,7 +114,10 @@ ui <- dashboardPage(
               box(htmltools::includeMarkdown("www/markdown/get_started.md"), width = 12)),
       tabItem(tabName = "single_tab",
               fluidRow(
-                box(htmltools::includeMarkdown("www/markdown/upload.md"),
+                box(h3("Step 1: Upload a CSV file"),
+                    p("Please Upload", strong("a CSV file"), "to generate", strong("a residual plot"), "it should contain", my_tooltip("If the CSV file contains data for multiple residual plots, you may optionally include a third column of labels to distinguish them."), ":"),
+                    tags$ul(tags$li(strong("a column for fitted values")),
+                            tags$li(strong("a column for residuals"))),
                     textOutput("data_status"),
                     br(),
                     fileInput("upload", NULL, accept = ".csv", buttonLabel = "Upload CSV", multiple = FALSE),
@@ -131,7 +134,7 @@ ui <- dashboardPage(
                 box(
                   conditionalPanel(
                       condition = "input.csv_type == 'single'",
-                      htmltools::includeMarkdown("www/markdown/variable_select.md"),
+                      withMathJax(htmltools::includeMarkdown("www/markdown/variable_select.md")),
                       fluidRow(
                         column(4, selectInput("var_fitted", "Fitted values", c(".fitted"))),
                         column(4, selectInput("var_resid", "Residuals", c(".resid")))
@@ -147,7 +150,7 @@ ui <- dashboardPage(
                     
                   conditionalPanel(
                       condition = "input.csv_type == 'lineup'",
-                      htmltools::includeMarkdown("www/markdown/lineup_variable_select.md"),
+                      withMathJax(htmltools::includeMarkdown("www/markdown/lineup_variable_select.md")),
                       fluidRow(
                         column(4, selectInput("lineup_var_fitted", "Fitted values", c(".fitted"))),
                         column(4, selectInput("lineup_var_resid", "Residuals", c(".resid"))),
@@ -159,7 +162,7 @@ ui <- dashboardPage(
                       ),
                       fluidRow(
                         column(4, numericInput("lineup_seed", "Seed", 2024, min = 1, max = 9999999, step = 1, width = "100%")),
-                        column(8, selectInput("true_sample", "True residual plot (Optional)", c("-----" = "0")))
+                        column(8, selectInput("true_sample", span("True residual plot (Optional)", my_tooltip("If no true residual plot is specified, the app will compute only the visual signal strength for each plot; p-values, bootstrapped signal strength, and gradient maps won't be available.")), c("-----" = "0")))
                       )
                   ),
                   width = 5, height = "100%", status = "primary"
@@ -869,7 +872,7 @@ server <- function(input, output, session) {
       geom_rug(aes(ori_vss, col = "Null"), alpha = 0.6) +
       geom_density(aes(vss, fill = "Boot", col = "Boot"), alpha = 0.6) +
       geom_rug(aes(vss, col = "Boot"), alpha = 0.6) +
-      geom_segment(aes(x = true_vss, xend = true_vss, y = 0, yend = Inf, linetype = "vss of the true plot")) +
+      geom_segment(aes(x = true_vss, xend = true_vss, y = 0, yend = Inf, linetype = "vss of the true residual plot")) +
       scale_fill_manual(values = c("#40B0A6", "#E1BE6A")) +
       scale_color_manual(values = c("#40B0A6", "#E1BE6A")) +
       labs(fill = "", col = "", linetype = "") +
@@ -912,7 +915,7 @@ server <- function(input, output, session) {
       geom_rug(aes(ori_vss, col = "Null"), alpha = 0.6) +
       geom_density(aes(vss, fill = "Boot", col = "Boot"), alpha = 0.6) +
       geom_rug(aes(vss, col = "Boot"), alpha = 0.6) +
-      geom_segment(aes(x = true_vss, xend = true_vss, y = 0, yend = Inf, linetype = "vss of the true plot")) +
+      geom_segment(aes(x = true_vss, xend = true_vss, y = 0, yend = Inf, linetype = "vss of the true residual plot")) +
       scale_fill_manual(values = c("#40B0A6", "#E1BE6A")) +
       scale_color_manual(values = c("#40B0A6", "#E1BE6A")) +
       labs(fill = "", col = "", linetype = "") +
