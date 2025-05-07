@@ -74,7 +74,39 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(
       tags$script(src = "js/tf.min.js"),
-      tags$script(src = "js/predict.js")
+      tags$script(src = "js/predict.js"),
+      tags$style(HTML("
+      .tooltip-wrapper {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      .tooltip-wrapper .tooltip-text {
+        visibility: hidden;
+        width: 250px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 5px 8px;
+        border-radius: 4px;
+
+        position: absolute;
+        z-index: 9999;
+        top: 100%;        /* Position below the element */
+        left: 100%;       /* Position to the right */
+        margin-top: 5px;  /* Small vertical gap */
+        margin-left: 5px; /* Small horizontal gap */
+
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip-wrapper:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+    "))
     ),
     shinyjs::useShinyjs(),
     tabItems(
