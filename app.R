@@ -49,6 +49,14 @@ get_auxiliary_data <- function(data) {
          "]")
 }
 
+my_tooltip <- function(text) {
+  span(
+    class = "tooltip-wrapper",
+    icon("circle-info"),
+    span(class = "tooltip-text", text)
+  )
+}
+
 
 # UI ----------------------------------------------------------------------
 
